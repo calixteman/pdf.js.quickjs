@@ -1,0 +1,21 @@
+[1mdiff --git a/quickjs.c b/quickjs.c[m
+[1mindex efc1d54..985bebd 100644[m
+[1m--- a/quickjs.c[m
+[1m+++ b/quickjs.c[m
+[36m@@ -47444,6 +47444,8 @@[m [mstatic JSValue js_global_unescape(JSContext *ctx, JSValueConst this_val,[m
+     return string_buffer_end(b);[m
+ }[m
+ [m
+[32m+[m[32m#include "../src/quickjs_extra.c"[m
+[32m+[m
+ /* global object */[m
+ [m
+ static const JSCFunctionListEntry js_global_funcs[] = {[m
+[36m@@ -47467,6 +47469,7 @@[m [mstatic const JSCFunctionListEntry js_global_funcs[] = {[m
+     //JS_CFUNC_DEF("__date_now", 0, js___date_now ),[m
+     //JS_CFUNC_DEF("__date_getTimezoneOffset", 1, js___date_getTimezoneOffset ),[m
+     //JS_CFUNC_DEF("__date_create", 3, js___date_create ),[m
+[32m+[m[32m    EXTRA[m
+ };[m
+ [m
+ /* Date */[m
