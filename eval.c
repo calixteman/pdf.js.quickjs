@@ -1,5 +1,5 @@
 #include <string.h>
-#include "../quickjs/quickjs.h"
+#include "quickjs/quickjs.h"
 
 static JSRuntime* runtime = 0;
 static JSContext* ctx = 0;

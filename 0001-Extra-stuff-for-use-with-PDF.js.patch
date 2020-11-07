@@ -15,7 +15,7 @@ index efc1d54..985bebd 100644
      return string_buffer_end(b);
  }
  
-+#include "../src/quickjs_extra.c"
++#include "../quickjs_extra.c"
 +
  /* global object */
  
