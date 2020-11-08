@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 mergeInto(LibraryManager.library, {
   sendToWindow: function(ptr) {
     const string = UTF8ToString(ptr);
@@ -19,7 +23,7 @@ mergeInto(LibraryManager.library, {
         const string = UTF8ToString(ptr);
         const id = window.setTimeout(() => {
           const cString = stringToNewUTF8(string);
-          _eval(cString);
+          _evalInSandbox(cString);
           _free(cString);
         }, millisecs);
         this.ids.add(id);
@@ -53,7 +57,7 @@ mergeInto(LibraryManager.library, {
         const string = UTF8ToString(ptr);
         const id = window.setInterval(() => {
           const cString = stringToNewUTF8(string);
-          _eval(cString);
+          _evalInSandbox(cString);
           _free(cString);
         }, millisecs);
         this.ids.add(id);

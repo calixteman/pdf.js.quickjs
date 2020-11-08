@@ -1,4 +1,10 @@
-// TODO: remove that
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+#define DEBUG_ME 0
+#if DEBUG_ME != 0
+#define DEBUGME JS_CFUNC_DEF("debugMe", 1, js_debugMe ),
 extern void debugMe(const char*);
 static JSValue js_debugMe(JSContext *ctx, JSValueConst this_val,
                           int argc, JSValueConst *argv)
@@ -17,7 +23,11 @@ static JSValue js_debugMe(JSContext *ctx, JSValueConst this_val,
 
     return JS_UNDEFINED;
 }
+#else
+#define DEBUGME
+#endif
 
+#define SEND JS_CFUNC_DEF("send", 1, js_send),
 extern void sendToWindow(const char*);
 static JSValue js_send(JSContext *ctx, JSValueConst this_val,
                        int argc, JSValueConst *argv)
@@ -37,6 +47,7 @@ static JSValue js_send(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+#define SETTIMEOUT JS_CFUNC_DEF("setTimeout", 2, js_setTimeout),
 extern int setTimeout(const char*, double);
 static JSValue js_setTimeout(JSContext *ctx, JSValueConst this_val,
                              int argc, JSValueConst *argv)
@@ -64,6 +75,7 @@ static JSValue js_setTimeout(JSContext *ctx, JSValueConst this_val,
     return JS_NewInt32(ctx, id);
 }
 
+#define CLEARTIMEOUT JS_CFUNC_DEF("clearTimeout", 1, js_clearTimeout),
 extern void clearTimeout(int);
 static JSValue js_clearTimeout(JSContext *ctx, JSValueConst this_val,
                                int argc, JSValueConst *argv)
@@ -82,6 +94,7 @@ static JSValue js_clearTimeout(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+#define SETINTERVAL JS_CFUNC_DEF("setInterval", 2, js_setInterval),
 extern int setInterval(const char*, double);
 static JSValue js_setInterval(JSContext *ctx, JSValueConst this_val,
                               int argc, JSValueConst *argv)
@@ -108,6 +121,7 @@ static JSValue js_setInterval(JSContext *ctx, JSValueConst this_val,
     return JS_NewInt32(ctx, id);
 }
 
+#define CLEARINTERVAL JS_CFUNC_DEF("clearInterval", 1, js_clearInterval),
 extern void clearInterval(int);
 static JSValue js_clearInterval(JSContext *ctx, JSValueConst this_val,
                                 int argc, JSValueConst *argv)
@@ -126,6 +140,7 @@ static JSValue js_clearInterval(JSContext *ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+#define CRACKURL JS_CFUNC_DEF("crackURL", 1, js_crackURL),
 extern char* crackURL(const char*);
 static JSValue js_crackURL(JSContext *ctx, JSValueConst this_val,
                            int argc, JSValueConst *argv)
@@ -162,10 +177,4 @@ static JSValue js_crackURL(JSContext *ctx, JSValueConst this_val,
     return obj;
 }
 
-#define EXTRA JS_CFUNC_DEF("send", 1, js_send ),                \
-        JS_CFUNC_DEF("setTimeout", 2, js_setTimeout ),          \
-        JS_CFUNC_DEF("clearTimeout", 1, js_clearTimeout ),      \
-        JS_CFUNC_DEF("setInterval", 2, js_setInterval ),        \
-        JS_CFUNC_DEF("clearInterval", 1, js_clearInterval ),    \
-        JS_CFUNC_DEF("crackURL", 1, js_crackURL ),              \
-        JS_CFUNC_DEF("debugMe", 1, js_debugMe ),
+#define EXTRA SEND SETTIMEOUT CLEARTIMEOUT SETINTERVAL CLEARINTERVAL CRACKURL DEBUGME
