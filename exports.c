@@ -30,9 +30,9 @@ void nukeSandbox() {
     }
     clearIds();
     JS_FreeContext(ctx);
-    ctx = 0;
+    ctx = NULL;
     JS_FreeRuntime(runtime);
-    runtime = 0;
+    runtime = NULL;
 }
 
 extern void logMemUse(const char*);
