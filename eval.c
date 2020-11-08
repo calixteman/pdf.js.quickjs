@@ -19,3 +19,8 @@ void evalInSandbox(const char* str) {
     result = JS_Eval(ctx, str, strlen(str), "<evalScript>", JS_EVAL_TYPE_GLOBAL);
     JS_FreeValue(ctx, result);
 }
+
+extern void clearIds();
+void clear() {
+    clearIds();
+}

@@ -5,89 +5,98 @@
 mergeInto(LibraryManager.library, {
   sendToWindow: function(ptr) {
     const string = UTF8ToString(ptr);
-    const data = window.JSON.parse(string);
-    if (data === undefined || data === null) {
-      return;
-    }
-    const event = new window.CustomEvent("updateFromSandbox", { detail: data });
-    window.dispatchEvent(event);
+    try {
+      const data = window.JSON.parse(string);
+      if (data === undefined || data === null) {
+        return;
+      }
+      const event = new window.CustomEvent("updateFromSandbox", { detail: data });
+      window.dispatchEvent(event);
+    } catch (_) {}
   },
   $timeout__postset: "timeout();",
   $timeout: function() {
     class Timeout {
       constructor() {
-        this.ids = new Set();
+        this.timeoutIds = new Set();
       }
 
-      set(ptr, millisecs) {
+      setTimeout(ptr, millisecs) {
         const string = UTF8ToString(ptr);
         const id = window.setTimeout(() => {
           const cString = stringToNewUTF8(string);
-          _evalInSandbox(cString);
-          _free(cString);
+          try {
+            _evalInSandbox(cString);
+          } catch (_) {
+          } finally {
+            _free(cString);
+            this.timeoutIds.delete(id);
+          }
         }, millisecs);
-        this.ids.add(id);
+        this.timeoutIds.add(id);
         return id;
       }
 
-      clear(id) {
-        if (this.ids.has(id)) {
+      clearTimeout(id) {
+        if (this.timeoutIds.has(id)) {
           window.clearTimeout(id);
-          this.ids.delete(id);
+          this.timeoutIds.delete(id);
         }
+      }
+
+      setInterval(ptr, millisecs) {
+        const string = UTF8ToString(ptr);
+        const id = window.setInterval(() => {
+          const cString = stringToNewUTF8(string);
+          try {
+            _evalInSandbox(cString);
+          } catch (_) {
+          } finally {
+            _free(cString);
+          }
+        }, millisecs);
+        this.timeoutIds.add(id);
+        return id;
+      }
+
+      clearInterval(id) {
+        if (this.timeoutIds.has(id)) {
+          window.clearInterval(id);
+          this.timeoutIds.delete(id);
+        }
+      }
+
+      clearIds() {
+        this.timeoutIds.forEach(id => window.clearTimeout(id));
+        this.timeoutIds.clear();
       }
     }
 
     const inst = new Timeout();
-    _setTimeout = inst.set.bind(inst);
-    _clearTimeout = inst.clear.bind(inst);
+    _setTimeout = inst.setTimeout.bind(inst);
+    _clearTimeout = inst.clearTimeout.bind(inst);
+    _setInterval = inst.setInterval.bind(inst);
+    _clearInterval = inst.clearInterval.bind(inst);
+    _clearIds = inst.clearIds.bind(inst);
   },
   setTimeout: function() {},
-  setTimeout__deps: ["$timeout", "$stringToNewUTF8"],
+  setTimeout__deps: ["$timeout"],
   clearTimeout: function() {},
   clearTimeout__deps: ["$timeout"],
-  $interval__postset: "interval();",
-  $interval: function() {
-    class Interval {
-      constructor() {
-        this.ids = new Set();
-      }
-
-      set(ptr, millisecs) {
-        const string = UTF8ToString(ptr);
-        const id = window.setInterval(() => {
-          const cString = stringToNewUTF8(string);
-          _evalInSandbox(cString);
-          _free(cString);
-        }, millisecs);
-        this.ids.add(id);
-        return id;
-      }
-
-      clear(id) {
-        if (this.ids.has(id)) {
-          window.clearInterval(id);
-          this.ids.delete(id);
-        }
-      }
-    }
-
-    const inst = new Interval();
-    _setInterval = inst.set.bind(inst);
-    _clearInterval = inst.clear.bind(inst);
-  },
   setInterval: function() {},
-  setInterval__deps: ["$interval", "$stringToNewUTF8"],
+  setInterval__deps: ["$timeout"],
   clearInterval: function() {},
-  clearInterval__deps: ["$interval"],
+  clearInterval__deps: ["$timeout"],
+  clearIds: function() {},
+  clearIds__deps: ["$timeout"],
   crackURL: function(ptr) {
     let result;
     try {
       const url = new window.URL(UTF8ToString(ptr));
       result = window.JSON.stringify({
         "cScheme": url.protocol,
-        "cUser": "",
-        "cPassword": "",
+        "cUser": url.username,
+        "cPassword": url.password,
         "cHost": url.hostname,
         "cPort": url.port,
         "cPath": url.pathname,
