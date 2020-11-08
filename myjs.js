@@ -118,5 +118,9 @@ mergeInto(LibraryManager.library, {
       data = string;
     }
     window.console.log("DEBUGME", data);
+  },
+  logMemUse: function(ptr) {
+    const string = UTF8ToString(ptr);
+    window.console.log(string);
   }
 });
