@@ -13,6 +13,9 @@ def create():
 
 def compile(path):
     path = os.path.abspath(path)
+    if not os.path.exists(path):
+        print(f"Invalid path: {path}")
+        return
     wd = os.path.abspath(".")
     out = subprocess.run("docker images qjs-sandbox", shell=True, capture_output=True)
     output = map(lambda x: x.strip(), out.stdout.split(b"\n"))
